@@ -21,9 +21,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     /* Path Mapping */
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["src/*"],
+      "@app/*": ["app/*"],
       "@pages/*": ["pages/*"],
       "@widgets/*": ["widgets/*"],
       "@features/*": ["features/*"],

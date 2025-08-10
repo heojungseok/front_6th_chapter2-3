@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react"
 import { Edit2, MessageSquare, Plus, Search, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react"
+import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+
 import {
   Button,
   Card,
@@ -365,12 +366,12 @@ const PostsManager = () => {
                 <div className="flex flex-wrap gap-1">
                   {post.tags?.map((tag) => (
                     <span
-                      key={tag}
                       className={`px-1 text-[9px] font-semibold rounded-[4px] cursor-pointer ${
                         selectedTag === tag
                           ? "text-white bg-blue-500 hover:bg-blue-600"
                           : "text-blue-800 bg-blue-100 hover:bg-blue-200"
                       }`}
+                      key={tag}
                       onClick={() => {
                         setSelectedTag(tag)
                         updateURL()
@@ -384,7 +385,7 @@ const PostsManager = () => {
             </TableCell>
             <TableCell>
               <div className="flex items-center space-x-2 cursor-pointer" onClick={() => openUserModal(post.author)}>
-                <img src={post.author?.image} alt={post.author?.username} className="w-8 h-8 rounded-full" />
+                <img alt={post.author?.username} className="w-8 h-8 rounded-full" src={post.author?.image} />
                 <span>{post.author?.username}</span>
               </div>
             </TableCell>
@@ -398,20 +399,20 @@ const PostsManager = () => {
             </TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => openPostDetail(post)}>
+                <Button onClick={() => openPostDetail(post)} size="sm" variant="ghost">
                   <MessageSquare className="w-4 h-4" />
                 </Button>
                 <Button
-                  variant="ghost"
-                  size="sm"
                   onClick={() => {
                     setSelectedPost(post)
                     setShowEditDialog(true)
                   }}
+                  size="sm"
+                  variant="ghost"
                 >
                   <Edit2 className="w-4 h-4" />
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => deletePost(post.id)}>
+                <Button onClick={() => deletePost(post.id)} size="sm" variant="ghost">
                   <Trash2 className="w-4 h-4" />
                 </Button>
               </div>
@@ -428,11 +429,11 @@ const PostsManager = () => {
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-semibold">댓글</h3>
         <Button
-          size="sm"
           onClick={() => {
             setNewComment((prev) => ({ ...prev, postId }))
             setShowAddCommentDialog(true)
           }}
+          size="sm"
         >
           <Plus className="w-3 h-3 mr-1" />
           댓글 추가
@@ -440,27 +441,27 @@ const PostsManager = () => {
       </div>
       <div className="space-y-1">
         {comments[postId]?.map((comment) => (
-          <div key={comment.id} className="flex items-center justify-between text-sm border-b pb-1">
+          <div className="flex items-center justify-between text-sm border-b pb-1" key={comment.id}>
             <div className="flex items-center space-x-2 overflow-hidden">
               <span className="font-medium truncate">{comment.user.username}:</span>
               <span className="truncate">{highlightText(comment.body, searchQuery)}</span>
             </div>
             <div className="flex items-center space-x-1">
-              <Button variant="ghost" size="sm" onClick={() => likeComment(comment.id, postId)}>
+              <Button onClick={() => likeComment(comment.id, postId)} size="sm" variant="ghost">
                 <ThumbsUp className="w-3 h-3" />
                 <span className="ml-1 text-xs">{comment.likes}</span>
               </Button>
               <Button
-                variant="ghost"
-                size="sm"
                 onClick={() => {
                   setSelectedComment(comment)
                   setShowEditCommentDialog(true)
                 }}
+                size="sm"
+                variant="ghost"
               >
                 <Edit2 className="w-3 h-3" />
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => deleteComment(comment.id, postId)}>
+              <Button onClick={() => deleteComment(comment.id, postId)} size="sm" variant="ghost">
                 <Trash2 className="w-3 h-3" />
               </Button>
             </div>
@@ -489,21 +490,21 @@ const PostsManager = () => {
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="게시물 검색..."
                   className="pl-8"
-                  value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && searchPosts()}
+                  placeholder="게시물 검색..."
+                  value={searchQuery}
                 />
               </div>
             </div>
             <Select
-              value={selectedTag}
               onValueChange={(value) => {
                 setSelectedTag(value)
                 fetchPostsByTag(value)
                 updateURL()
               }}
+              value={selectedTag}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="태그 선택" />
@@ -517,7 +518,7 @@ const PostsManager = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={sortBy} onValueChange={setSortBy}>
+            <Select onValueChange={setSortBy} value={sortBy}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="정렬 기준" />
               </SelectTrigger>
@@ -528,7 +529,7 @@ const PostsManager = () => {
                 <SelectItem value="reactions">반응</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={sortOrder} onValueChange={setSortOrder}>
+            <Select onValueChange={setSortOrder} value={sortOrder}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="정렬 순서" />
               </SelectTrigger>
@@ -546,7 +547,7 @@ const PostsManager = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
               <span>표시</span>
-              <Select value={limit.toString()} onValueChange={(value) => setLimit(Number(value))}>
+              <Select onValueChange={(value) => setLimit(Number(value))} value={limit.toString()}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="10" />
                 </SelectTrigger>
@@ -571,28 +572,28 @@ const PostsManager = () => {
       </CardContent>
 
       {/* 게시물 추가 대화상자 */}
-      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+      <Dialog onOpenChange={setShowAddDialog} open={showAddDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>새 게시물 추가</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Input
+              onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
               placeholder="제목"
               value={newPost.title}
-              onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
             />
             <Textarea
-              rows={30}
-              placeholder="내용"
-              value={newPost.body}
               onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
+              placeholder="내용"
+              rows={30}
+              value={newPost.body}
             />
             <Input
-              type="number"
-              placeholder="사용자 ID"
-              value={newPost.userId}
               onChange={(e) => setNewPost({ ...newPost, userId: Number(e.target.value) })}
+              placeholder="사용자 ID"
+              type="number"
+              value={newPost.userId}
             />
             <Button onClick={addPost}>게시물 추가</Button>
           </div>
@@ -600,22 +601,22 @@ const PostsManager = () => {
       </Dialog>
 
       {/* 게시물 수정 대화상자 */}
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+      <Dialog onOpenChange={setShowEditDialog} open={showEditDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>게시물 수정</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Input
+              onChange={(e) => setSelectedPost({ ...selectedPost, title: e.target.value })}
               placeholder="제목"
               value={selectedPost?.title || ""}
-              onChange={(e) => setSelectedPost({ ...selectedPost, title: e.target.value })}
             />
             <Textarea
-              rows={15}
-              placeholder="내용"
-              value={selectedPost?.body || ""}
               onChange={(e) => setSelectedPost({ ...selectedPost, body: e.target.value })}
+              placeholder="내용"
+              rows={15}
+              value={selectedPost?.body || ""}
             />
             <Button onClick={updatePost}>게시물 업데이트</Button>
           </div>
@@ -623,16 +624,16 @@ const PostsManager = () => {
       </Dialog>
 
       {/* 댓글 추가 대화상자 */}
-      <Dialog open={showAddCommentDialog} onOpenChange={setShowAddCommentDialog}>
+      <Dialog onOpenChange={setShowAddCommentDialog} open={showAddCommentDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>새 댓글 추가</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Textarea
+              onChange={(e) => setNewComment({ ...newComment, body: e.target.value })}
               placeholder="댓글 내용"
               value={newComment.body}
-              onChange={(e) => setNewComment({ ...newComment, body: e.target.value })}
             />
             <Button onClick={addComment}>댓글 추가</Button>
           </div>
@@ -640,16 +641,16 @@ const PostsManager = () => {
       </Dialog>
 
       {/* 댓글 수정 대화상자 */}
-      <Dialog open={showEditCommentDialog} onOpenChange={setShowEditCommentDialog}>
+      <Dialog onOpenChange={setShowEditCommentDialog} open={showEditCommentDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>댓글 수정</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <Textarea
+              onChange={(e) => setSelectedComment({ ...selectedComment, body: e.target.value })}
               placeholder="댓글 내용"
               value={selectedComment?.body || ""}
-              onChange={(e) => setSelectedComment({ ...selectedComment, body: e.target.value })}
             />
             <Button onClick={updateComment}>댓글 업데이트</Button>
           </div>
@@ -657,7 +658,7 @@ const PostsManager = () => {
       </Dialog>
 
       {/* 게시물 상세 보기 대화상자 */}
-      <Dialog open={showPostDetailDialog} onOpenChange={setShowPostDetailDialog}>
+      <Dialog onOpenChange={setShowPostDetailDialog} open={showPostDetailDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle>{highlightText(selectedPost?.title, searchQuery)}</DialogTitle>
@@ -670,13 +671,13 @@ const PostsManager = () => {
       </Dialog>
 
       {/* 사용자 모달 */}
-      <Dialog open={showUserModal} onOpenChange={setShowUserModal}>
+      <Dialog onOpenChange={setShowUserModal} open={showUserModal}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>사용자 정보</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <img src={selectedUser?.image} alt={selectedUser?.username} className="w-24 h-24 rounded-full mx-auto" />
+            <img alt={selectedUser?.username} className="w-24 h-24 rounded-full mx-auto" src={selectedUser?.image} />
             <h3 className="text-xl font-semibold text-center">{selectedUser?.username}</h3>
             <div className="space-y-2">
               <p>

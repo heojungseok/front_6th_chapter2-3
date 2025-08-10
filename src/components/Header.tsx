@@ -1,5 +1,5 @@
-import React from "react"
 import { MessageSquare } from "lucide-react"
+import React from "react"
 
 const Header: React.FC = () => {
   return (
@@ -12,17 +12,17 @@ const Header: React.FC = () => {
         <nav>
           <ul className="flex space-x-4">
             <li>
-              <a href="#" className="hover:underline">
+              <a className="hover:underline" href="#">
                 홈
               </a>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <a className="hover:underline" href="#">
                 대시보드
               </a>
             </li>
             <li>
-              <a href="#" className="hover:underline">
+              <a className="hover:underline" href="#">
                 설정
               </a>
             </li>
