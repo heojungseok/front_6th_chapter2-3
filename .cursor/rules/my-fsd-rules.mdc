@@ -1,0 +1,78 @@
+---
+description: "FSD + Component Rules"
+globs:
+  - "src/**/*.{ts,tsx,js,jsx}"
+alwaysApply: true
+---
+
+# ==============================
+# FSD 아키텍처 규칙
+# ==============================
+
+# 레이어 경로 alias
+aliases:
+  app: "@app/*"
+  pages: "@pages/*"
+  widgets: "@widgets/*"
+  features: "@features/*"
+  entities: "@entities/*"
+  shared: "@shared/*"
+
+# 허용 import 매트릭스
+imports:
+  - from: app
+    allow: [pages, widgets, features, entities, shared]
+  - from: pages
+    allow: [widgets, features, entities, shared]
+  - from: widgets
+    allow: [features, entities, shared]
+  - from: features
+    allow: [entities, shared]
+  - from: entities
+    allow: [shared]
+  - from: shared
+    allow: [shared]
+
+# 상대경로 금지
+- selector: "import-declaration"
+  message: "상대경로 import 금지, 반드시 alias 사용"
+  regex: "^\\.\\./"
+  severity: error
+
+# 배럴 파일 외부 노출만 허용
+- selector: "import-declaration"
+  message: "내부 파일 직접 import 금지, 배럴(index)로 가져오세요"
+  regex: ".+/(?!index)([a-zA-Z0-9_-]+)\\.(ts|tsx|js|jsx)$"
+  severity: error
+
+# ==============================
+# 컴포넌트 작성 순서 규칙
+# ==============================
+- selector: "function-declaration"
+  message: "컴포넌트 내부 작성 순서가 가이드와 다릅니다 (Import → 타입 정의 → 컴포넌트 정의 → state → ref → context → store → useMemo → useCallback → useEffect → 이벤트 핸들러 → 조건부 렌더링 → JSX)"
+  conditions:
+    order:
+      - import
+      - type-alias
+      - function-component
+      - state
+      - ref
+      - context
+      - store
+      - useMemo
+      - useCallback
+      - useEffect
+      - event-handler
+      - conditional-render
+      - return-jsx
+  severity: warning
+
+# ==============================
+# 테스트/예외 허용
+# ==============================
+ignore:
+  - "**/*.test.*"
+  - "**/*.spec.*"
+  - "**/*.stories.*"
+  - "**/__mocks__/**"
+  - "**/__tests__/**"
