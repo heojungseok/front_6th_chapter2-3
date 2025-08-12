@@ -1,1 +1,1 @@
-export * from "@shared/ui/textarea/Textarea";
+export * from "@shared/ui/textarea/Textarea"

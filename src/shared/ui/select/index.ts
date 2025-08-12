@@ -1,1 +1,1 @@
-export * from "@shared/ui/select/Select";
+export * from "@shared/ui/select/Select"

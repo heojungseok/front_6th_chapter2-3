@@ -1,1 +1,1 @@
-export * from "@shared/ui/table/Table";
+export * from "@shared/ui/table/Table"

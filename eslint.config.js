@@ -38,25 +38,28 @@ export default tseslint.config(
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
 
       // FSD 경계 룰
-      "boundaries/element-types": ["error", {
-        default: "disallow",
-        rules: [
-          { from: ["app"], allow: ["pages", "widgets", "features", "entities", "shared"] },
-          { from: ["pages"], allow: ["widgets", "features", "entities", "shared"] },
-          { from: ["widgets"], allow: ["features", "entities", "shared"] },
-          { from: ["features"], allow: ["entities", "shared"] },
-          { from: ["entities"], allow: ["shared"] },
-          { from: ["shared"], allow: ["shared"] },
-        ],
-      }],
+      "boundaries/element-types": [
+        "error",
+        {
+          default: "disallow",
+          rules: [
+            { from: ["app"], allow: ["pages", "widgets", "features", "entities", "shared"] },
+            { from: ["pages"], allow: ["widgets", "features", "entities", "shared"] },
+            { from: ["widgets"], allow: ["features", "entities", "shared"] },
+            { from: ["features"], allow: ["entities", "shared"] },
+            { from: ["entities"], allow: ["shared"] },
+            { from: ["shared"], allow: ["shared"] },
+          ],
+        },
+      ],
 
       // 코드 포맷팅 룰
       "perfectionist/sort-imports": [
         "error",
         {
-          "type": "natural",
-          "order": "asc",
-          "groups": [
+          type: "natural",
+          order: "asc",
+          groups: [
             "builtin",
             "external",
             "internal-type",
@@ -66,7 +69,7 @@ export default tseslint.config(
             "object",
             "unknown",
           ],
-          "customGroups": {
+          customGroups: {
             value: {
               "react": ["react", "react-*"],
               "@app": "@app/.*",
@@ -77,7 +80,7 @@ export default tseslint.config(
               "@shared": "@shared/.*",
             },
           },
-          "newlinesBetween": "always",
+          newlinesBetween: "always",
         },
       ],
       "perfectionist/sort-named-imports": ["error", { type: "natural" }],
