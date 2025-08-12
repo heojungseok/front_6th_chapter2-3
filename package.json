@@ -16,16 +16,19 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.84.2",
     "eslint-import-resolver-typescript": "^3.6.0",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@feature-sliced/eslint-config": "^0.1.0",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-select": "^2.2.5",
+    "@tanstack/react-query-devtools": "^5.84.2",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
