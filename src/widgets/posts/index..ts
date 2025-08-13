@@ -1,1 +1,1 @@
-export { PostsTable } from "@widgets/posts/PostsTable"
+export { PostsTable } from "./PostsTable"

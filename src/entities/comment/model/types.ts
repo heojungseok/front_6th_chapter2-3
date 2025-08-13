@@ -6,4 +6,3 @@ export type Comment = {
   id: number
   postId: number
 }
-export type CommentListResponse = { comments: Comment[] }

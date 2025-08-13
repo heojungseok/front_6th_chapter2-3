@@ -1,1 +1,1 @@
-export { default as Footer } from "@widgets/footer/Footer"
+export { default as Footer } from "./Footer"
