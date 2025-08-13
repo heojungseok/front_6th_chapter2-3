@@ -153,3 +153,32 @@ onChange={(e) => setSearchQuery(e.target.value)}  // ❌ e: any
 - **확장성**: 향후 기능 추가 시 FSD 구조를 활용하여 체계적 개발
 
 지금까지의 작업이 FSD 전환의 기초를 잘 다진 것 같아요! 다음 단계로 타입 오류 수정을 진행할까요?
+
+## 📋 현재까지 작업한 내역
+
+### **1단계: URL 유틸리티 분리**
+- `@shared/lib/urlUtils.ts` 생성
+- `updateURL`, `getUrlParams` 함수 구현
+- PostsManagerPage URL 로직 리팩토링
+
+### **2단계: 태그 엔티티 분리**
+- `@entities/tag/store/tagStore.ts` 생성
+- `tags`, `selectedTag` 상태를 전역 스토어로 관리
+- PostsManagerPage에서 `useTagStore()` 적용
+
+### **3단계: 사용자 엔티티 분리**
+- `@entities/user/store/userStore.ts` 생성
+- `selectedUser` 상태를 전역 스토어로 관리
+- PostsManagerPage에서 `useUserStore()` 적용
+
+### **4단계: 도메인별 상태 그룹핑**
+- 태그, 사용자, 게시물, 댓글, UI 상태를 도메인별로 분리
+- 각 도메인별 주석으로 그룹핑 완료
+
+### **5단계: FSD 구조 준수**
+- `@shared/lib`, `@entities/*/store` 레이어 구성
+- 배럴 파일을 통한 외부 노출
+- 상대경로 import 금지 규칙 준수
+
+## �� 핵심 성과
+**도메인별 상태 관리 체계화로 코드 구조 개선 및 유지보수성 향상**

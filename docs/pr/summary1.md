@@ -5,19 +5,21 @@
 ## 🎯 핵심 아이디어: "상태를 나누면 도메인이 보인다"
 
 ### 현재 상황: 모든 상태가 한 곳에 섞여있음
+
 ```typescript
 // PostsManagerPage.tsx - 모든 상태가 뒤섞여 있음
-const [posts, setPosts] = useState<post[]>([])           // 게시물 상태
-const [comments, setComments] = useState<Comment[]>([])  // 댓글 상태  
-const [tags, setTags] = useState<Tag[]>([])              // 태그 상태
-const [users, setUsers] = useState<User[]>([])           // 사용자 상태
-const [loading, setLoading] = useState(false)            // 로딩 상태
+const [posts, setPosts] = useState<post[]>([]) // 게시물 상태
+const [comments, setComments] = useState<Comment[]>([]) // 댓글 상태
+const [tags, setTags] = useState<Tag[]>([]) // 태그 상태
+const [users, setUsers] = useState<User[]>([]) // 사용자 상태
+const [loading, setLoading] = useState(false) // 로딩 상태
 const [showAddDialog, setShowAddDialog] = useState(false) // UI 상태
 ```
 
 ## �� 1단계: 상태를 **도메인별로** 그룹핑
 
 ### 게시물 도메인
+
 ```typescript
 // 게시물과 관련된 모든 상태
 const [posts, setPosts] = useState<post[]>([])
@@ -30,6 +32,7 @@ const [sortOrder, setSortOrder] = useState("asc")
 ```
 
 ### 댓글 도메인
+
 ```typescript
 // 댓글과 관련된 모든 상태
 const [comments, setComments] = useState<Comment[]>([])
@@ -38,6 +41,7 @@ const [newComment, setNewComment] = useState({ body: "", postId: null, userId: 1
 ```
 
 ### 태그 도메인
+
 ```typescript
 // 태그와 관련된 모든 상태
 const [tags, setTags] = useState<Tag[]>([])
@@ -47,6 +51,7 @@ const [selectedTag, setSelectedTag] = useState("")
 ## 🏗️ 2단계: 각 도메인을 **별도 파일로** 분리
 
 ### 게시물 도메인 → `@entities/post/store/postsStore.ts`
+
 ```typescript
 // 게시물 관련 상태와 로직을 모아둠
 export const usePostsStore = create<PostsState>((set) => ({
@@ -57,7 +62,7 @@ export const usePostsStore = create<PostsState>((set) => ({
   searchQuery: "",
   sortBy: "",
   sortOrder: "asc",
-  
+
   setPosts: (posts) => set({ posts }),
   setTotal: (total) => set({ total }),
   setSkip: (skip) => set({ skip }),
@@ -66,16 +71,18 @@ export const usePostsStore = create<PostsState>((set) => ({
 ```
 
 ### 댓글 도메인 → `@entities/comment/store/commentsStore.ts`
+
 ```typescript
 // 댓글 관련 상태와 로직을 모아둠
 export const useCommentsStore = create<CommentsState>((set) => ({
   comments: {},
   selectedComment: null,
   newComment: { body: "", postId: null, userId: 1 },
-  
-  addComment: (comment) => set((state) => ({
-    comments: addCommentToState(state.comments, comment)
-  })),
+
+  addComment: (comment) =>
+    set((state) => ({
+      comments: addCommentToState(state.comments, comment),
+    })),
   // ... 더 많은 액션들
 }))
 ```
@@ -83,6 +90,7 @@ export const useCommentsStore = create<CommentsState>((set) => ({
 ## �� 3단계: **엔티티의 모습이 드러남**
 
 ### 게시물 엔티티의 완성
+
 ```
 @entities/post/
 ├── model/
@@ -95,6 +103,7 @@ export const useCommentsStore = create<CommentsState>((set) => ({
 ```
 
 ### 댓글 엔티티의 완성
+
 ```
 @entities/comment/
 ├── model/
@@ -133,6 +142,7 @@ const { users } = useUsersStore()
 ## �� 실제 적용 순서
 
 ### 1단계: 상태 그룹핑
+
 ```typescript
 // PostsManagerPage에서 상태들을 도메인별로 주석으로 그룹핑
 // === 게시물 도메인 ===
@@ -146,6 +156,7 @@ const [comments, setComments] = useState<Comment[]>([])
 ```
 
 ### 2단계: 각 도메인을 별도 파일로 분리
+
 ### 3단계: 엔티티 구조 완성
 
 ## �� 결론
@@ -155,5 +166,10 @@ const [comments, setComments] = useState<Comment[]>([])
 - **상태 그룹핑** → **도메인 인식** → **엔티티 형성**
 - 복잡한 상태를 작은 단위로 나누면 자연스럽게 도메인 경계가 드러남
 - 각 도메인은 하나의 엔티티가 됨
+
+상태 그룹핑의 마법
+상태를 도메인별로 그룹핑 → 관심사 분리
+관심사 분리 → 도메인 경계 명확화
+도메인 경계 명확화 → 엔티티 형성
 
 이해가 되셨나요? 이제 실제로 상태를 그룹핑해보시겠습니까?
