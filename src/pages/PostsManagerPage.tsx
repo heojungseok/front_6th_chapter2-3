@@ -1,7 +1,7 @@
 import { Comment } from "@entities/comment/model/types"
 import { post, postList } from "@entities/post/model/types"
-import { Tag } from "@entities/tag/model/types"
-import { User, UserSlime } from "@entities/user/model/types"
+import { Tag, useTagStore } from "@entities/tag"
+import { User, UserSlime, useUserStore } from "@entities/user"
 import { highlightText } from "@shared/lib/highlightText"
 import { getUrlParams, updateURL } from "@shared/lib/urlUtils"
 import {
@@ -31,13 +31,6 @@ const PostsManager = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [skip, setSkip] = useState(0)
-  const [limit, setLimit] = useState(10)
-  const [searchQuery, setSearchQuery] = useState("")
-  const [sortBy, setSortBy] = useState("")
-  const [sortOrder, setSortOrder] = useState("asc")
-  const [selectedTag, setSelectedTag] = useState("")
-
   useEffect(() => {
     const { skip, limit, searchQuery, sortBy, sortOrder, selectedTag } = getUrlParams(location.search)
     setSkip(skip)
@@ -48,27 +41,40 @@ const PostsManager = () => {
     setSelectedTag(selectedTag)
   }, [location.search])
 
-  // 상태 관리
+  // == 태그 도메인 ==
+  const { tags, selectedTag, setTags, setSelectedTag } = useTagStore()
+
+  // == 게시글 도메인 ==
+  // 게시글 데이터
   const [posts, setPosts] = useState<post[]>([])
   const [total, setTotal] = useState(0)
   const [selectedPost, setSelectedPost] = useState<post | null>(null)
+  // 게시글 목록 페이지네이션
+  const [skip, setSkip] = useState(0)
+  const [limit, setLimit] = useState(10)
   const [loading, setLoading] = useState(false)
-  const [tags, setTags] = useState<Tag[]>([])
+  // 게시글 검색/정렬
+  const [searchQuery, setSearchQuery] = useState("")
+  const [sortBy, setSortBy] = useState("")
+  const [sortOrder, setSortOrder] = useState("asc")
+  // 게시글 추가
+  const [newPost, setNewPost] = useState({ title: "", body: "", userId: 1 })
+
+  // == 댓글 도메인 ==
+  const [comments, setComments] = useState<Comment[]>([])
+  const [selectedComment, setSelectedComment] = useState<Comment | null>(null)
+  const [newComment, setNewComment] = useState({ body: "", postId: null, userId: 1 })
+
+  // == 사용자 도메인 ==
+  const { selectedUser, setSelectedUser } = useUserStore()  
+
+  // == UI 상태 도메인 ==
   const [showAddDialog, setShowAddDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
-  const [newPost, setNewPost] = useState({ title: "", body: "", userId: 1 })
-  const [selectedComment, setSelectedComment] = useState<Comment | null>(null)
-  const [comments, setComments] = useState<Comment[]>([])
-  const [newComment, setNewComment] = useState({ body: "", postId: null, userId: 1 })
   const [showAddCommentDialog, setShowAddCommentDialog] = useState(false)
   const [showEditCommentDialog, setShowEditCommentDialog] = useState(false)
   const [showPostDetailDialog, setShowPostDetailDialog] = useState(false)
   const [showUserModal, setShowUserModal] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-    setNewPost({ ...newPost, body: e.target.value })
 
   // 게시물 가져오기
   const fetchPosts = () => {
@@ -300,7 +306,7 @@ const PostsManager = () => {
     try {
       const response = await fetch(`/api/users/${user.id}`)
       const userData = await response.json()
-      setSelectedUser(userData)
+      setSelectedUser(userData as User)
       setShowUserModal(true)
     } catch (error) {
       console.error("사용자 정보 가져오기 오류:", error)

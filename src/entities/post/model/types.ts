@@ -1,6 +1,6 @@
 import { UserSlime } from "@entities/user/model/types"
 
-export type Reaction = { dislikes: number; likes: number; }
+export type Reaction = { dislikes: number; likes: number }
 export type post = {
   author: UserSlime
   body: string
