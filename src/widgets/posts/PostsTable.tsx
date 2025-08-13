@@ -5,16 +5,16 @@ import { Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow }
 import { Edit2, MessageSquare, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react"
 
 interface PostsTableProps {
+  deletePost: (id: number) => void
+  editPost: (post: post) => void
+  openPostDetail: (post: post) => void
+  openUserModal: (user: UserSlime) => void
   posts: post[]
   searchQuery: string
   selectedTag: string
   setSelectedTag: (tag: string) => void
-  openUserModal: (user: UserSlime) => void
-  openPostDetail: (post: post) => void
-  editPost: (post: post) => void
-  deletePost: (id: number) => void
-  updateURL: () => void
   setShowEditDialog: (show: boolean) => void
+  updateURL: () => void
 }
 
 export const PostsTable = ({

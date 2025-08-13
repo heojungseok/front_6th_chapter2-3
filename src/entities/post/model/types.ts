@@ -1,13 +1,13 @@
 import { UserSlime } from "@entities/user/model/types"
 
-export type Reaction = { likes: number; dislikes: number }
+export type Reaction = { dislikes: number; likes: number; }
 export type post = {
-  id: number
-  userId: number
-  title: string
-  body: string
-  tags?: string[]
-  reactions: Reaction
   author: UserSlime
+  body: string
+  id: number
+  reactions: Reaction
+  tags?: string[]
+  title: string
+  userId: number
 }
 export type postList = { posts: post[]; total: number }
