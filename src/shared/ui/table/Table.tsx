@@ -1,52 +1,67 @@
-import * as React from "react"
+import { forwardRef, HTMLAttributes } from "react"
 
-// 테이블 컴포넌트
-export const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
-  ({ className, ...props }, ref) => (
-    <div className="w-full overflow-auto">
-      <table className={`table-fixed w-full caption-bottom text-sm ${className}`} ref={ref} {...props} />
-    </div>
-  ),
-)
-Table.displayName = "Table"
+interface TableProps extends HTMLAttributes<HTMLTableElement> {
+  className?: string
+}
 
-export const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => <thead className={`[&_tr]:border-b ${className}`} ref={ref} {...props} />,
-)
-TableHeader.displayName = "TableHeader"
-
-export const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => (
-    <tbody className={`[&_tr:last-child]:border-0 ${className}`} ref={ref} {...props} />
-  ),
-)
-TableBody.displayName = "TableBody"
-
-export const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
-  ({ className, ...props }, ref) => (
-    <tr
-      className={`border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted h-14 ${className}`}
+export const Table = forwardRef<HTMLTableElement, TableProps>(({ className, ...props }, ref) => (
+  <div className="relative w-full overflow-auto">
+    <table
+      className={`w-full caption-bottom text-sm ${className || ''}`}
       ref={ref}
       {...props}
     />
-  ),
-)
-TableRow.displayName = "TableRow"
+  </div>
+))
 
-export const TableHead = React.forwardRef<HTMLTableCellElement, React.HTMLAttributes<HTMLTableCellElement>>(
-  ({ className, ...props }, ref) => (
-    <th
-      className={`h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${className}`}
-      ref={ref}
-      {...props}
-    />
-  ),
-)
-TableHead.displayName = "TableHead"
+interface TableHeaderProps extends HTMLAttributes<HTMLTableSectionElement> {
+  className?: string
+}
 
-export const TableCell = React.forwardRef<HTMLTableCellElement, React.HTMLAttributes<HTMLTableCellElement>>(
-  ({ className, ...props }, ref) => (
-    <td className={`p-2 align-middle [&:has([role=checkbox])]:pr-0 ${className}`} ref={ref} {...props} />
-  ),
-)
-TableCell.displayName = "TableCell"
+export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(({ className, ...props }, ref) => (
+  <thead className={`[&_tr]:border-b ${className || ''}`} ref={ref} {...props} />
+))
+
+interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
+  className?: string
+}
+
+export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(({ className, ...props }, ref) => (
+  <tbody className={`[&_tr:last-child]:border-0 ${className || ''}`} ref={ref} {...props} />
+))
+
+interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
+  className?: string
+}
+
+export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(({ className, ...props }, ref) => (
+  <tr
+    className={`border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted ${className || ''}`}
+    ref={ref}
+    {...props}
+  />
+))
+
+interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
+  className?: string
+}
+
+export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(({ className, ...props }, ref) => (
+  <th
+    className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${className || ''}`}
+    ref={ref}
+    {...props}
+  />
+))
+
+interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
+  className?: string
+}
+
+export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(({ className, ...props }, ref) => (
+  <td
+    className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${className || ''}`}
+    ref={ref}
+    {...props}
+  />
+))

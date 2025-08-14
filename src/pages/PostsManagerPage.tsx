@@ -1,12 +1,13 @@
 import { commentsApi } from "@entities/comment/api/commentApi"
-import { Comment } from "@entities/comment/model/types"
+import { CommentType } from "@entities/comment/model/types"
 import { useCommentStore } from "@entities/comment/store/commentStore"
 import { post, postList } from "@entities/post/model/types"
 import { Tag, useTagStore } from "@entities/tag"
 import { User, UserSlime, useUserStore } from "@entities/user"
 import { highlightText } from "@shared/lib/highlightText"
 import { getUrlParams, updateURL } from "@shared/lib/urlUtils"
-import {
+import { isCommentDuplicate, isCommentExists } from "@shared/utils/commentUtils"
+import {  
   Button,
   Card,
   CardContent,
@@ -227,7 +228,7 @@ const PostsManager = () => {
     try {
       const response = await commentsApi.fetchComments(postId)
       // 스토어 액션 사용
-      fetchCommentsForPost(postId, response as Comment[])
+      fetchCommentsForPost(postId, response as CommentType[])
     } catch (error) {
       console.error("댓글 가져오기 오류:", error)
     }
@@ -235,9 +236,21 @@ const PostsManager = () => {
 
   // 댓글 추가
   const handleAddComment = async () => {
+    if (!newComment.postId) return
+    
     try {
-      const response = await commentsApi.addComment(newComment)
-      addComment(response as Comment)
+      // 1. 클라이언트에서 중복 체크
+      const existingComments = comments[newComment.postId] || []
+      if (isCommentDuplicate(newComment as CommentType, existingComments)) {
+        alert("이미 동일한 댓글이 존재합니다.")
+        return
+      }
+
+      // 2. API 호출
+      const response = await commentsApi.addComment(newComment as CommentType)
+      
+      // 3. 스토어에 추가
+      addComment(response as CommentType)
       setShowAddCommentDialog(false)
       resetNewComment()
     } catch (error) {
@@ -248,7 +261,7 @@ const PostsManager = () => {
   // 댓글 업데이트
   const handleUpdateComment = async () => {
     try {
-      const response = await commentsApi.updateComment(selectedComment as Comment)
+      const response = await commentsApi.updateComment(selectedComment as CommentType)
       updateComment(response)
       setShowEditCommentDialog(false)
     } catch (error) {
@@ -259,11 +272,21 @@ const PostsManager = () => {
   // 댓글 삭제
   const handleDeleteComment = async (id: number, postId: number) => {
     try {
-      await commentsApi.deleteComment(id, postId)
-      deleteComment(id, postId)
-    } catch (error) {
-      console.error("댓글 삭제 오류:", error)
+    // 1. 클라이언트에서 존재 여부 체크
+    const currentComments = comments[postId] || []
+    if (!isCommentExists(id, currentComments)) {
+      alert("댓글을 찾을 수 없습니다.")
+      return
     }
+
+    // 2. API 호출
+    await commentsApi.deleteComment(id)
+    
+    // 3. 스토어에서 제거
+    deleteComment(id, postId)
+  } catch (error) {
+    console.error("댓글 삭제 오류:", error)
+  }
   }
 
   // 댓글 좋아요
@@ -464,12 +487,12 @@ const PostsManager = () => {
           </DialogHeader>
           <div className="space-y-4">
             <Input
-              onChange={(e) => setSelectedPost({ ...selectedPost, title: e.target.value })}
+              onChange={(e) => setSelectedPost({ ...selectedPost, title: e.target.value } as post)}
               placeholder="제목"
               value={selectedPost?.title || ""}
             />
             <Textarea
-              onChange={(e) => setSelectedPost({ ...selectedPost, body: e.target.value })}
+              onChange={(e) => setSelectedPost({ ...selectedPost, body: e.target.value } as post)}
               placeholder="내용"
               rows={15}
               value={selectedPost?.body || ""}
@@ -504,7 +527,7 @@ const PostsManager = () => {
           </DialogHeader>
           <div className="space-y-4">
             <Textarea
-              onChange={(e) => setSelectedComment({ ...selectedComment, body: e.target.value })}
+              onChange={(e) => setSelectedComment({ ...selectedComment, body: e.target.value } as CommentType)}
               placeholder="댓글 내용"
               value={selectedComment?.body || ""}
             />
@@ -517,10 +540,10 @@ const PostsManager = () => {
       <Dialog onOpenChange={setShowPostDetailDialog} open={showPostDetailDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>{highlightText(selectedPost?.title, searchQuery)}</DialogTitle>
+            <DialogTitle>{highlightText(selectedPost?.title || "", searchQuery)}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p>{highlightText(selectedPost?.body, searchQuery)}</p>
+            <p>{highlightText(selectedPost?.body || "", searchQuery)}</p>
             <CommentSection
               comments={comments[selectedPost?.id || 0] || []}
               onAddComment={handleAddComment}

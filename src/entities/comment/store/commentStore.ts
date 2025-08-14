@@ -1,24 +1,23 @@
-import { isCommentDuplicate, isCommentExists } from "@shared/utils/commentUtils"
 import { create } from "zustand" 
 
-import { Comment } from "../model/types"
+import { CommentType } from "../model/types"
 
 interface CommentsState {
   // 액션들
-  addComment: (comment: Comment) => void
+  addComment: (comment: CommentType) => void
   // 상태들
-  comments: Record<number, Comment[]>
+  comments: Record<number, CommentType[]>
   deleteComment: (id: number, postId: number) => void
 
-  fetchCommentsForPost: (postId: number, comments: Comment[]) => void
+  fetchCommentsForPost: (postId: number, comments: CommentType[]) => void
   likeComment: (id: number, postId: number) => void
   newComment: { body: string; postId: number | null; userId: number }
   resetNewComment: () => void
-  selectedComment: Comment | null
-  setComments: (comments: Record<number, Comment[]>) => void
+  selectedComment: CommentType | null
+  setComments: (comments: Record<number, CommentType[]>) => void
   setNewComment: (comment: { body: string; postId: number | null; userId: number }) => void
-  setSelectedComment: (comment: Comment | null) => void
-  updateComment: (comment: Comment) => void
+  setSelectedComment: (comment: CommentType | null) => void
+  updateComment: (comment: CommentType) => void
 }
 
 export const useCommentStore = create<CommentsState>((set) => ({
@@ -28,10 +27,6 @@ export const useCommentStore = create<CommentsState>((set) => ({
   addComment: (comment) =>
     set((state) => {
       const existingComments = state.comments[comment.postId] || []
-      // 중복 체크
-      if (isCommentDuplicate(comment, existingComments)) {
-        return state // 중복이면 상태 변경 안함
-      }
       return {
         comments: {
           ...state.comments,
@@ -42,10 +37,6 @@ export const useCommentStore = create<CommentsState>((set) => ({
   deleteComment: (id, postId) =>
     set((state) => {
       const currentComments = state.comments[postId] || []
-      // 존재 여부 체크
-      if (!isCommentExists(id, currentComments)) {
-        return state // 댓글이 없으면 상태 변경 안함
-      }
       return {
         comments: {
           ...state.comments,
@@ -53,7 +44,7 @@ export const useCommentStore = create<CommentsState>((set) => ({
         },
       }
     }),
-  fetchCommentsForPost: (postId: number, comments: Comment[]) =>
+  fetchCommentsForPost: (postId: number, comments: CommentType[]) =>
     set((state) => ({
       comments: { ...state.comments, [postId]: comments },
     })),

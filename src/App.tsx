@@ -1,5 +1,6 @@
 import PostsManagerPage from "@pages/PostsManagerPage"
-import { Footer, Header } from "@widgets"
+import { Footer } from "@shared/ui/footer"
+import { Header } from "@shared/ui/header"
 import { BrowserRouter as Router } from "react-router-dom"
 
 const App = () => {

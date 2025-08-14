@@ -1,13 +1,13 @@
-import { Comment } from "@entities/comment/model/types"
+import { CommentType } from "@entities/comment/model/types"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button } from "@shared/ui"
 import { Edit2, Plus, ThumbsUp, Trash2 } from "lucide-react"
 
 interface CommentSectionProps {
-  comments: Comment[]
+  comments: CommentType[]
   onAddComment: (postId: number) => void
   onDeleteComment: (id: number, postId: number) => void
-  onEditComment: (comment: Comment) => void
+  onEditComment: (comment: CommentType) => void
   onLikeComment: (id: number, postId: number) => void
   postId: number
   searchQuery: string

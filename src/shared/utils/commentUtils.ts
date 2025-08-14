@@ -1,17 +1,19 @@
-import { Comment } from "@entities/comment/model/types"
+import { CommentType } from "@entities/comment/model/types"
 
-// 댓글 중복 체크
+// 댓글 중복 체크 - body와 postId로만 체크
 export const isCommentDuplicate = (
-  comment: Comment, 
-  existingComments: Comment[]
+  comment: { body: string; postId: number }, 
+  existingComments: CommentType[]
 ): boolean => {
-  return existingComments.some(c => c.id === comment.id)
+  return existingComments.some(c => 
+    c.body === comment.body && c.postId === comment.postId
+  )
 }
 
 // 댓글 존재 여부 체크
 export const isCommentExists = (
   commentId: number, 
-  comments: Comment[]
+  comments: CommentType[]
 ): boolean => {
   return comments.some(c => c.id === commentId)
 }
