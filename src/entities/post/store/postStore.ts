@@ -3,34 +3,34 @@ import { create } from "zustand"
 import { CreatePostRequest, Post } from "../model/types"
 
 interface PostState {
+  addPost: (post: Post) => void
+  deletePost: (id: number) => void
+  error: string | null
+  isLoading: boolean
+  limit: number
+  newPost: CreatePostRequest
   // 상태들
   posts: Post[]
-  selectedPost: Post | null
-  newPost: CreatePostRequest
-  isLoading: boolean
-  total: number
+  resetNewPost: () => void
   searchQuery: string
-  sortBy: string
-  sortOrder: string
-  skip: number
-  limit: number
-  error: string | null
+  selectedPost: Post | null
+  setLimit: (limit: number) => void
 
+  setLoading: (loading: boolean) => void
+  setNewPost: (post: CreatePostRequest) => void
   // 액션들
   setPosts: (posts: Post[]) => void
-  setSelectedPost: (post: Post | null) => void
-  setNewPost: (post: CreatePostRequest) => void
-  setTotal: (total: number) => void
-  addPost: (post: Post) => void
-  updatePost: (post: Post) => void
-  deletePost: (id: number) => void
-  resetNewPost: () => void
-  setLoading: (loading: boolean) => void
-  setSkip: (skip: number) => void
-  setLimit: (limit: number) => void
   setSearchQuery: (searchQuery: string) => void
+  setSelectedPost: (post: Post | null) => void
+  setSkip: (skip: number) => void
   setSortBy: (sortBy: string) => void
   setSortOrder: (sortOrder: string) => void
+  setTotal: (total: number) => void
+  skip: number
+  sortBy: string
+  sortOrder: string
+  total: number
+  updatePost: (post: Post) => void
 }
 
 export const usePostStore = create<PostState>((set) => ({

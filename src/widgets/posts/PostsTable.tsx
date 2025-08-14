@@ -1,4 +1,4 @@
-import { post } from "@entities/post/model/types"
+import { Post } from "@entities/post/model/types"
 import { UserSlime } from "@entities/user/model/types"
 import { highlightText } from "@shared/lib/highlightText"
 import { Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@shared/ui"
@@ -6,10 +6,10 @@ import { Edit2, MessageSquare, ThumbsDown, ThumbsUp, Trash2 } from "lucide-react
 
 interface PostsTableProps {
   deletePost: (id: number) => void
-  editPost: (post: post) => void
-  openPostDetail: (post: post) => void
+  editPost: (post: Post) => void
+  openPostDetail: (post: Post) => void
   openUserModal: (user: UserSlime) => void
-  posts: post[]
+  posts: Post[]
   searchQuery: string
   selectedTag: string
   setSelectedTag: (tag: string) => void
@@ -52,17 +52,17 @@ export const PostsTable = ({
                   {post.tags?.map((tag) => (
                     <span
                       className={`px-1 text-[9px] font-semibold rounded-[4px] cursor-pointer ${
-                        selectedTag === tag
+                        selectedTag === tag.slug
                           ? "text-white bg-blue-500 hover:bg-blue-600"
                           : "text-blue-800 bg-blue-100 hover:bg-blue-200"
                       }`}
-                      key={tag}
+                      key={tag.slug}
                       onClick={() => {
-                        setSelectedTag(tag)
+                        setSelectedTag(tag.slug)
                         updateURL()
                       }}
                     >
-                      {tag}
+                      {tag.slug}
                     </span>
                   ))}
                 </div>

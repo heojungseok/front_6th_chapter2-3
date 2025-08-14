@@ -1,13 +1,12 @@
 import { commentsApi } from "@entities/comment/api/commentApi"
 import { CommentType } from "@entities/comment/model/types"
 import { useCommentStore } from "@entities/comment/store/commentStore"
-import { Post, postApi } from "@entities/post"
+import { Post, postApi, UpdatePostRequest } from "@entities/post"
 import { usePostStore } from "@entities/post/store/postStore"
 import { Tag, useTagStore } from "@entities/tag"
 import { User, userApi, UserSlime, useUserStore } from "@entities/user"
 import { highlightText } from "@shared/lib/highlightText"
 import { getUrlParams, updateURL } from "@shared/lib/urlUtils"
-import { isCommentDuplicate, isCommentExists } from "@shared/utils/commentUtils"
 import {
   Button,
   Card,
@@ -19,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
+  Pagination,
   Select,
   SelectContent,
   SelectItem,
@@ -26,6 +26,7 @@ import {
   SelectValue,
   Textarea,
 } from "@shared/ui"
+import { isCommentDuplicate, isCommentExists } from "@shared/utils/commentUtils"
 import { CommentSection } from "@widgets/comments"
 import { PostsTable } from "@widgets/posts/PostsTable"
 import { Plus, Search } from "lucide-react"
@@ -146,7 +147,7 @@ const PostsManager = () => {
         author: usersData.users.find((user: UserSlime) => user.id === post.author.id),
       }))
 
-      setPosts(postsWithUsers)
+      setPosts(postsWithUsers as Post[])
       setTotal(postsData.total)
     } catch (error) {
       console.error("태그별 게시물 가져오기 오류:", error)
@@ -169,7 +170,7 @@ const PostsManager = () => {
   // 게시물 업데이트
   const updatePost = async () => {
     try {
-      const data = await postApi.updatePost(selectedPost)
+      const data = await postApi.updatePost(selectedPost as unknown as UpdatePostRequest)
       setPosts(posts.map((post: Post) => (post.id === data.id ? data : post)))
       setShowEditDialog(false)
     } catch (error) {
@@ -188,20 +189,20 @@ const PostsManager = () => {
   }
 
   // 사용자 정보 가져오기
-  const fetchUsersForPosts = async (posts: Post[]) => {
-    try {
-      const usersData = await userApi.fetchUsers()
+  // const fetchUsersForPosts = async (posts: Post[]) => {
+  //   try {
+  //     const usersData = await userApi.fetchUsers()
 
-      const postsWithUsers = posts.map((post) => ({
-        ...post,
-        author: usersData.users.find((user: UserSlime) => user.id === post.author.id),
-      }))
+  //     const postsWithUsers = posts.map((post) => ({
+  //       ...post,
+  //       author: usersData.users.find((user: UserSlime) => user.id === post.author.id),
+  //     }))
 
-      setPosts(postsWithUsers as Post[])
-    } catch (error) {
-      console.error("사용자 정보 가져오기 오류:", error)
-    }
-  }
+  //     setPosts(postsWithUsers as Post[])
+  //   } catch (error) {
+  //     console.error("사용자 정보 가져오기 오류:", error)
+  //   }
+  // }
 
   // 태그 가져오기
   const fetchTags = async () => {
@@ -413,30 +414,13 @@ const PostsManager = () => {
           )}
 
           {/* 페이지네이션 */}
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span>표시</span>
-              <Select onValueChange={(value) => setLimit(Number(value))} value={limit.toString()}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="10" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="30">30</SelectItem>
-                </SelectContent>
-              </Select>
-              <span>항목</span>
-            </div>
-            <div className="flex gap-2">
-              <Button disabled={skip === 0} onClick={() => setSkip(Math.max(0, skip - limit))}>
-                이전
-              </Button>
-              <Button disabled={skip + limit >= total} onClick={() => setSkip(skip + limit)}>
-                다음
-              </Button>
-            </div>
-          </div>
+          <Pagination
+            limit={limit}
+            onLimitChange={setLimit}
+            onSkipChange={setSkip}
+            skip={skip}
+            total={total}
+          />
         </div>
       </CardContent>
 

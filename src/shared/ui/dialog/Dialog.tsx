@@ -2,13 +2,13 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { ButtonHTMLAttributes, forwardRef, HTMLAttributes } from "react"
 
 interface DialogTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  className?: string
   children?: React.ReactNode
+  className?: string
 }
 
 interface DialogContentProps extends HTMLAttributes<HTMLDivElement> {
-  className?: string
   children?: React.ReactNode
+  className?: string
 }
 
 interface DialogHeaderProps extends HTMLAttributes<HTMLDivElement> {
