@@ -71,10 +71,10 @@ const PostsManager = () => {
     updateComment,
     deleteComment,
     resetNewComment,
-    setComments,
     setSelectedComment,
     setNewComment,
-    fetchComments,
+    fetchCommentsForPost,
+    likeComment,
   } = useCommentStore()
 
   // == 사용자 도메인 ==
@@ -225,7 +225,8 @@ const PostsManager = () => {
     if (comments[postId]) return // 이미 불러온 댓글이 있으면 다시 불러오지 않음
     try {
       const response = await commentsApi.fetchComments(postId)
-      setComments((prev) => ({ ...prev, [postId]: response as Comment[] }))
+      // 스토어 액션 사용
+      fetchCommentsForPost(postId, response as Comment[])
     } catch (error) {
       console.error("댓글 가져오기 오류:", error)
     }
@@ -267,8 +268,11 @@ const PostsManager = () => {
   // 댓글 좋아요
   const handleLikeComment = async (id: number, postId: number) => {
     try {
-      const response = await commentsApi.likeComment(id, comments[postId].find((c) => c.id === id)?.likes + 1)
-      updateComment(response as Comment)
+      const currentComment = comments[postId]?.find((c) => c.id === id)
+      if (!currentComment) return
+
+      const response = await commentsApi.likeComment(id, currentComment.likes)
+      likeComment(response.id, response.postId)
     } catch (error) {
       console.error("댓글 좋아요 오류:", error)
     }

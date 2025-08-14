@@ -5,39 +5,30 @@ import { Comment } from "../model/types"
 interface CommentsState {
   // 상태들
   comments: Record<number, Comment[]>
-  selectedComment: Comment | null
   newComment: { body: string; postId: number | null; userId: number }
+  selectedComment: Comment | null
 
   // 액션들
-  setComments: (comments: Record<number, Comment[]>) => void
-  setSelectedComment: (comment: Comment | null) => void
-  setNewComment: (comment: { body: string; postId: number | null; userId: number }) => void
   addComment: (comment: Comment) => void
-  updateComment: (comment: Comment) => void
   deleteComment: (id: number, postId: number) => void
+  fetchCommentsForPost: (postId: number, comments: Comment[]) => void
+  likeComment: (id: number, postId: number) => void
   resetNewComment: () => void
-  fetchComments: (postId: number) => void
+  setComments: (comments: Record<number, Comment[]>) => void
+  setNewComment: (comment: { body: string; postId: number | null; userId: number }) => void
+  setSelectedComment: (comment: Comment | null) => void
+  updateComment: (comment: Comment) => void
 }
 
 export const useCommentStore = create<CommentsState>((set) => ({
   comments: {},
   newComment: { body: "", postId: null, userId: 1 },
   selectedComment: null,
-  setComments: (comments) => set({ comments }),
-  setNewComment: (comment) => set({ newComment: comment }),
-  setSelectedComment: (comment) => set({ selectedComment: comment }),
   addComment: (comment) =>
     set((state) => ({
       comments: {
         ...state.comments,
         [comment.postId]: [...(state.comments[comment.postId] || []), comment],
-      },
-    })),
-  updateComment: (comment) =>
-    set((state) => ({
-      comments: {
-        ...state.comments,
-        [comment.postId]: state.comments[comment.postId].map((c) => (c.id === comment.id ? comment : c)),
       },
     })),
   deleteComment: (id, postId) =>
@@ -47,6 +38,26 @@ export const useCommentStore = create<CommentsState>((set) => ({
         [postId]: state.comments[postId].filter((c) => c.id !== id),
       },
     })),
+  fetchCommentsForPost: (postId: number, comments: Comment[]) =>
+    set((state) => ({
+      comments: { ...state.comments, [postId]: comments },
+    })),
   resetNewComment: () => set({ newComment: { body: "", postId: null, userId: 1 } }),
-  fetchComments: (postId) => set((state) => ({ comments: { ...state.comments, [postId]: state.comments[postId] } })),
+  setComments: (comments) => set({ comments }),
+  setNewComment: (comment) => set({ newComment: comment }),
+  setSelectedComment: (comment) => set({ selectedComment: comment }),
+  updateComment: (comment) =>
+    set((state) => ({
+      comments: {
+        ...state.comments,
+        [comment.postId]: state.comments[comment.postId]?.map((c) => (c.id === comment.id ? comment : c)) || [],
+      },
+    })),
+  likeComment: (id: number, postId: number) =>
+    set((state) => ({
+      comments: {
+        ...state.comments,
+        [postId]: state.comments[postId]?.map((c) => (c.id === id ? { ...c, likes: c.likes + 1 } : c)) || [],
+      },
+    })),
 }))
