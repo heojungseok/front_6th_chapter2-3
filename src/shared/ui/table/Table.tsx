@@ -6,11 +6,7 @@ interface TableProps extends HTMLAttributes<HTMLTableElement> {
 
 export const Table = forwardRef<HTMLTableElement, TableProps>(({ className, ...props }, ref) => (
   <div className="relative w-full overflow-auto">
-    <table
-      className={`w-full caption-bottom text-sm ${className || ''}`}
-      ref={ref}
-      {...props}
-    />
+    <table className={`w-full caption-bottom text-sm ${className || ""}`} ref={ref} {...props} />
   </div>
 ))
 
@@ -19,7 +15,7 @@ interface TableHeaderProps extends HTMLAttributes<HTMLTableSectionElement> {
 }
 
 export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(({ className, ...props }, ref) => (
-  <thead className={`[&_tr]:border-b ${className || ''}`} ref={ref} {...props} />
+  <thead className={`[&_tr]:border-b ${className || ""}`} ref={ref} {...props} />
 ))
 
 interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
@@ -27,7 +23,7 @@ interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
 }
 
 export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(({ className, ...props }, ref) => (
-  <tbody className={`[&_tr:last-child]:border-0 ${className || ''}`} ref={ref} {...props} />
+  <tbody className={`[&_tr:last-child]:border-0 ${className || ""}`} ref={ref} {...props} />
 ))
 
 interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
@@ -36,7 +32,7 @@ interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(({ className, ...props }, ref) => (
   <tr
-    className={`border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted ${className || ''}`}
+    className={`border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted ${className || ""}`}
     ref={ref}
     {...props}
   />
@@ -48,7 +44,7 @@ interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
 
 export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(({ className, ...props }, ref) => (
   <th
-    className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${className || ''}`}
+    className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${className || ""}`}
     ref={ref}
     {...props}
   />
@@ -59,9 +55,5 @@ interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
 }
 
 export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(({ className, ...props }, ref) => (
-  <td
-    className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${className || ''}`}
-    ref={ref}
-    {...props}
-  />
+  <td className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${className || ""}`} ref={ref} {...props} />
 ))

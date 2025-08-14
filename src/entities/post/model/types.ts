@@ -1,13 +1,31 @@
+import { Tag } from "@entities/tag/model/types"
 import { UserSlime } from "@entities/user/model/types"
 
 export type Reaction = { dislikes: number; likes: number }
-export type post = {
+export type Post = {
   author: UserSlime
   body: string
+  createdAt: string
   id: number
   reactions: Reaction
-  tags?: string[]
+  tags: Tag[]
+  title: string
+  updatedAt: string
+}
+export type PostList = { posts: Post[]; total: number }
+
+// 게시물 생성용 타입
+export type CreatePostRequest = {
+  body: string
+  tagIds: number[]
   title: string
   userId: number
 }
-export type postList = { posts: post[]; total: number }
+
+// 게시물 수정용 타입
+export type UpdatePostRequest = {
+  body: string
+  id: number
+  tagIds: number[]
+  title: string
+}
