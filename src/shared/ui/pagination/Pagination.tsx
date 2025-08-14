@@ -1,6 +1,6 @@
 import { Button } from "@shared/ui"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@shared/ui"
-    
+
 interface PaginationProps {
   limit: number
   onLimitChange: (limit: number) => void
@@ -27,19 +27,13 @@ export const Pagination = ({ skip, limit, total, onSkipChange, onLimitChange }: 
         <span>항목</span>
       </div>
       <div className="flex gap-2">
-        <Button 
-          disabled={skip === 0} 
-          onClick={() => onSkipChange(Math.max(0, skip - limit))}
-        >
+        <Button disabled={skip === 0} onClick={() => onSkipChange(Math.max(0, skip - limit))}>
           이전
         </Button>
-        <Button 
-          disabled={skip + limit >= total} 
-          onClick={() => onSkipChange(skip + limit)}
-        >
+        <Button disabled={skip + limit >= total} onClick={() => onSkipChange(skip + limit)}>
           다음
         </Button>
       </div>
     </div>
   )
-}   
+}

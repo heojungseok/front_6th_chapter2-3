@@ -8,7 +8,7 @@ export const userApi = {
     if (select) {
       params.append("select", select)
     }
-    
+
     const response = await fetch(`/api/users?${params.toString()}`)
     if (!response.ok) {
       throw new Error("사용자 목록을 가져오는데 실패했습니다.")
