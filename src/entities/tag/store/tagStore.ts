@@ -3,12 +3,12 @@ import { create } from "zustand"
 import { Tag } from "../model/types"
 
 interface TagState {
-  // 1. 상태 (State)
-  tags: Tag[]
   selectedTag: string
+  setSelectedTag: (tag: string) => void
   // 2. 액션 (Actions)
   setTags: (tags: Tag[]) => void
-  setSelectedTag: (tag: string) => void
+  // 1. 상태 (State)
+  tags: Tag[]
 }
 
 export const useTagStore = create<TagState>((set) => ({
