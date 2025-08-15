@@ -39,13 +39,13 @@ const PostsManager = () => {
   const location = useLocation()
 
   useEffect(() => {
-    const { skip, limit, searchQuery, sortBy, sortOrder, selectedTag } = getUrlParams(location.search)
+    const { skip, limit, searchQuery, sortBy, order, selectedTag } = getUrlParams(location.search)
+    setSelectedTag(selectedTag)
     setSkip(skip)
     setLimit(limit)
     setSearchQuery(searchQuery)
     setSortBy(sortBy)
-    setSortOrder(sortOrder)
-    setSelectedTag(selectedTag)
+    setOrder(order)
   }, [location.search])
 
   // == 태그 도메인 ==
@@ -67,8 +67,8 @@ const PostsManager = () => {
     setSearchQuery,
     sortBy,
     setSortBy,
-    sortOrder,
-    setSortOrder,
+    order,
+    setOrder,
     newPost,
     setNewPost,
     isLoading,
@@ -350,11 +350,11 @@ const PostsManager = () => {
     } else {
       fetchPosts()
     }
-    updateURL(skip, limit, searchQuery, sortBy, sortOrder, selectedTag, navigate)
-  }, [skip, limit, sortBy, sortOrder, selectedTag])
+    updateURL(skip, limit, searchQuery, sortBy, order, selectedTag, navigate)
+  }, [skip, limit, sortBy, order, selectedTag])
 
   return (
-    <Card className="w-full max-w-6xl mx-auto">
+    <Card className="w-full max-w-6xl h-full mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>게시물 관리자</span>
@@ -384,7 +384,7 @@ const PostsManager = () => {
               onValueChange={(value) => {
                 setSelectedTag(value)
                 fetchPostsByTag(value)
-                updateURL(skip, limit, searchQuery, sortBy, sortOrder, value, navigate)
+                updateURL(skip, limit, searchQuery, sortBy, order, value, navigate)
               }}
               value={selectedTag}
             >
@@ -411,7 +411,7 @@ const PostsManager = () => {
                 <SelectItem value="reactions">반응</SelectItem>
               </SelectContent>
             </Select>
-            <Select onValueChange={setSortOrder} value={sortOrder}>
+            <Select onValueChange={setOrder} value={order}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="정렬 순서" />
               </SelectTrigger>
@@ -436,7 +436,7 @@ const PostsManager = () => {
               selectedTag={selectedTag as string}
               setSelectedTag={setSelectedTag}
               setShowEditDialog={openEditDialog}
-              updateURL={() => updateURL(skip, limit, searchQuery, sortBy, sortOrder, selectedTag, navigate)}
+              updateURL={() => updateURL(skip, limit, searchQuery, sortBy, order, selectedTag, navigate)}
             />
           )}
 

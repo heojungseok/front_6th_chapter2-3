@@ -15,7 +15,7 @@ export const commentsApi = {
       throw error
     }
   },
-  
+
   addComment: async (comment: CommentType): Promise<CommentType> => {
     try {
       const response = await fetch(API_CONFIG.COMMENTS.BASE, {
@@ -32,7 +32,7 @@ export const commentsApi = {
       throw error
     }
   },
-  
+
   updateComment: async (comment: CommentType): Promise<CommentType> => {
     try {
       const response = await fetch(`${API_CONFIG.COMMENTS.BASE}/${comment.id}`, {
@@ -49,7 +49,7 @@ export const commentsApi = {
       throw error
     }
   },
-  
+
   deleteComment: async (id: number): Promise<void> => {
     try {
       const response = await fetch(`${API_CONFIG.COMMENTS.BASE}/${id}`, {
@@ -63,7 +63,7 @@ export const commentsApi = {
       throw error
     }
   },
-  
+
   likeComment: async (id: number, currentLikes: number): Promise<CommentType> => {
     try {
       const response = await fetch(`${API_CONFIG.COMMENTS.BASE}/${id}`, {

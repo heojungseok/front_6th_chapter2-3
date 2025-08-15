@@ -9,26 +9,26 @@ interface PostState {
   isLoading: boolean
   limit: number
   newPost: CreatePostRequest
+  order: string
   // 상태들
   posts: Post[]
   resetNewPost: () => void
   searchQuery: string
   selectedPost: Post | null
-  setLimit: (limit: number) => void
 
+  setLimit: (limit: number) => void
   setLoading: (loading: boolean) => void
   setNewPost: (post: CreatePostRequest) => void
+  setOrder: (order: string) => void
   // 액션들
   setPosts: (posts: Post[]) => void
   setSearchQuery: (searchQuery: string) => void
   setSelectedPost: (post: Post | null) => void
   setSkip: (skip: number) => void
   setSortBy: (sortBy: string) => void
-  setSortOrder: (sortOrder: string) => void
   setTotal: (total: number) => void
   skip: number
   sortBy: string
-  sortOrder: string
   total: number
   updatePost: (post: Post) => void
 }
@@ -45,7 +45,7 @@ export const usePostStore = create<PostState>((set) => ({
   limit: 10,
   searchQuery: "",
   sortBy: "",
-  sortOrder: "asc",
+  order: "asc",
 
   // 액션들
   setPosts: (posts) => set({ posts }),
@@ -59,8 +59,8 @@ export const usePostStore = create<PostState>((set) => ({
   setSkip: (skip) => set({ skip }),
   setLimit: (limit) => set({ limit }),
   setSearchQuery: (searchQuery) => set({ searchQuery }),
+  setOrder: (order) => set({ order }),
   setSortBy: (sortBy) => set({ sortBy }),
-  setSortOrder: (sortOrder) => set({ sortOrder }),
 
   addPost: (post) =>
     set((state) => ({

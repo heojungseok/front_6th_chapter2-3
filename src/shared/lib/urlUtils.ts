@@ -25,7 +25,7 @@ export const getUrlParams = (url: string) => {
     limit: parseInt(params.get("limit") || "10"),
     searchQuery: params.get("search") || "",
     sortBy: params.get("sortBy") || "",
-    sortOrder: params.get("sortOrder") || "",
+    order: params.get("order") || "",
     selectedTag: params.get("tag") || "",
   }
 }
