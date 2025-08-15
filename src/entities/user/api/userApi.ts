@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query"
 import { API_CONFIG, handleApiError } from "@shared/config/api"
 
 import { User, UserSlime } from "../model/types"
@@ -21,7 +22,7 @@ export const userApi = {
     }
   },
 
-  // 특정 사용자 상세 정보 가져오기
+  // 특정 사용자 정보 가져오기
   fetchUserById: async (id: number): Promise<User> => {
     try {
       const response = await fetch(`${API_CONFIG.USERS.BASE}/${id}`)
@@ -38,7 +39,7 @@ export const userApi = {
   // 사용자 생성
   createUser: async (user: Omit<User, "id">): Promise<User> => {
     try {
-      const response = await fetch(API_CONFIG.USERS.BASE, {
+      const response = await fetch(`${API_CONFIG.USERS.BASE}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
@@ -53,7 +54,7 @@ export const userApi = {
     }
   },
 
-  // 사용자 정보 수정
+  // 사용자 수정
   updateUser: async (id: number, user: Partial<User>): Promise<User> => {
     try {
       const response = await fetch(`${API_CONFIG.USERS.BASE}/${id}`, {
@@ -66,7 +67,7 @@ export const userApi = {
       }
       return await response.json()
     } catch (error) {
-      console.error("사용자 정보 수정 오류:", handleApiError(error))
+      console.error("사용자 수정 오류:", handleApiError(error))
       throw error
     }
   },
@@ -85,18 +86,56 @@ export const userApi = {
       throw error
     }
   },
+}
 
-  // 사용자 검색
-  searchUsers: async (query: string): Promise<{ users: UserSlime[] }> => {
+// React Query를 사용하는 훅
+export const useUserActions = () => {
+  const queryClient = useQueryClient()
+
+  // 사용자 생성 후 캐시 무효화
+  const createUserWithCache = async (user: Omit<User, "id">) => {
     try {
-      const response = await fetch(`${API_CONFIG.USERS.BASE}/search?q=${encodeURIComponent(query)}`)
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      return await response.json()
+      const result = await userApi.createUser(user)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["users"] })
+      return result
     } catch (error) {
-      console.error("사용자 검색 오류:", handleApiError(error))
+      console.error("사용자 생성 오류:", error)
       throw error
     }
-  },
+  }
+
+  // 사용자 수정 후 캐시 무효화
+  const updateUserWithCache = async (id: number, user: Partial<User>) => {
+    try {
+      const result = await userApi.updateUser(id, user)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["users"] })
+      queryClient.invalidateQueries({ queryKey: ["users", id] })
+      return result
+    } catch (error) {
+      console.error("사용자 수정 오류:", error)
+      throw error
+    }
+  }
+
+  // 사용자 삭제 후 캐시 무효화
+  const deleteUserWithCache = async (id: number) => {
+    try {
+      await userApi.deleteUser(id)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["users"] })
+      queryClient.invalidateQueries({ queryKey: ["users", id] })
+    } catch (error) {
+      console.error("사용자 삭제 오류:", error)
+      throw error
+    }
+  }
+
+  return {
+    ...userApi,
+    createUser: createUserWithCache,
+    updateUser: updateUserWithCache,
+    deleteUser: deleteUserWithCache,
+  }
 }

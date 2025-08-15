@@ -1,4 +1,5 @@
 import { API_CONFIG, handleApiError } from "@shared/config/api"
+import { useQueryClient } from "@tanstack/react-query"
 
 import { Tag } from "../model/types"
 
@@ -81,4 +82,54 @@ export const tagApi = {
       throw error
     }
   },
+}
+
+// React Query를 사용하는 훅
+export const useTagActions = () => {
+  const queryClient = useQueryClient()
+
+  // 태그 생성 후 캐시 무효화
+  const createTagWithCache = async (tag: Omit<Tag, "id" | "url">) => {
+    try {
+      const result = await tagApi.createTag(tag)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["tags"] })
+      return result
+    } catch (error) {
+      console.error("태그 생성 오류:", error)
+      throw error
+    }
+  }
+
+  // 태그 수정 후 캐시 무효화
+  const updateTagWithCache = async (slug: string, tag: Partial<Tag>) => {
+    try {
+      const result = await tagApi.updateTag(slug, tag)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["tags"] })
+      return result
+    } catch (error) {
+      console.error("태그 수정 오류:", error)
+      throw error
+    }
+  }
+
+  // 태그 삭제 후 캐시 무효화
+  const deleteTagWithCache = async (slug: string) => {
+    try {
+      await tagApi.deleteTag(slug)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["tags"] })
+    } catch (error) {
+      console.error("태그 삭제 오류:", error)
+      throw error
+    }
+  }
+
+  return {
+    ...tagApi,
+    createTag: createTagWithCache,
+    updateTag: updateTagWithCache,
+    deleteTag: deleteTagWithCache,
+  }
 }

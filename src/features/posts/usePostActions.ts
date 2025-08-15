@@ -20,9 +20,9 @@ export const usePostActions = () => {
   const fetchPostsData = async (limit: number, skip: number) => {
     setLoading(true)
     try {
-      const data = await postApi.fetchPosts(limit, skip) 
+      const data = await postApi.fetchPosts(limit, skip)
       const usersData = await userApi.fetchUsers()
-        
+
       const postsWithUsers = data.posts.map((post: Post) => ({
         ...post,
         author: usersData.users.find((user: UserSlime) => user.id === post.id),
@@ -51,7 +51,7 @@ export const usePostActions = () => {
       const usersData = await userApi.fetchUsers()
       const postsWithUsers = data.posts.map((post: Post) => ({
         ...post,
-        author: usersData.users.find((user: UserSlime) => user.id === post.author.id),
+        author: usersData.users.find((user: UserSlime) => user.id === post.id),
       }))
 
       setPosts(postsWithUsers as Post[])
@@ -98,7 +98,7 @@ export const usePostActions = () => {
       const data = await postApi.createPost(post)
       addPostToStore(data as Post)
       // 캐시 무효화
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      queryClient.invalidateQueries({ queryKey: ["posts"] })
       return data
     } catch (error) {
       console.error("게시물 생성 오류:", error)
@@ -111,7 +111,7 @@ export const usePostActions = () => {
       const data = await postApi.updatePost(post)
       updatePostInStore(data as Post)
       // 캐시 무효화
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      queryClient.invalidateQueries({ queryKey: ["posts"] })
       return data
     } catch (error) {
       console.error("게시물 업데이트 오류:", error)
@@ -124,7 +124,7 @@ export const usePostActions = () => {
       await postApi.deletePost(id)
       deletePostFromStore(id)
       // 캐시 무효화
-      queryClient.invalidateQueries({ queryKey: ['posts'] })
+      queryClient.invalidateQueries({ queryKey: ["posts"] })
     } catch (error) {
       console.error("게시물 삭제 오류:", error)
       throw error

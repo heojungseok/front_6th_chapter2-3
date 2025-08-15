@@ -1,10 +1,8 @@
-import { CommentType } from "@entities/comment/model/types"
-import { useCommentStore } from "@entities/comment/store/commentStore"
+import { useCommentActions, useCommentStore } from "@entities/comment"
 import { CreatePostRequest, Post, UpdatePostRequest } from "@entities/post"
 import { usePostStore } from "@entities/post/store/postStore"
 import { tagApi, useTagStore } from "@entities/tag"
 import { User, userApi, UserSlime, useUserStore } from "@entities/user"
-import { useCommentActions } from "@features/comments"
 import { usePostActions } from "@features/posts"
 import { useSearchActions } from "@features/search"
 import { getUrlParams } from "@shared/lib/urlUtils"
@@ -23,12 +21,20 @@ import {
   SelectValue,
 } from "@shared/ui"
 // 모달 import
-import { AddCommentModal, AddPostModal, EditCommentModal, EditPostModal, PostDetailModal, UserModal } from "@widgets/modals"
+import {
+  AddCommentModal,
+  AddPostModal,
+  EditCommentModal,
+  EditPostModal,
+  PostDetailModal,
+  UserModal,
+} from "@widgets/modals"
 import { useModalStore } from "@widgets/modals/store/modalStore"
 import { PostsTable } from "@widgets/posts/PostsTable"
 import { Plus, Search } from "lucide-react"
 import { useEffect } from "react"
 import { useLocation } from "react-router-dom"
+import { CommentType } from "@entities/comment"
 
 const PostsManager = () => {
   const location = useLocation()
@@ -67,14 +73,8 @@ const PostsManager = () => {
   } = usePostStore()
 
   // == 댓글 도메인 ==
-  const {
-    comments,
-    selectedComment,
-    newComment,
-    resetNewComment,
-    setSelectedComment,
-    setNewComment,
-  } = useCommentStore()
+  const { comments, selectedComment, newComment, resetNewComment, setSelectedComment, setNewComment } =
+    useCommentStore()
 
   // == 사용자 도메인 ==
   const { selectedUser, setSelectedUser } = useUserStore()
@@ -97,19 +97,13 @@ const PostsManager = () => {
     closeEditCommentDialog,
     openPostDetailDialog,
     closePostDetailDialog,
-    openUserModal: openUserModalStore,
     closeUserModal,
     closeAllModals,
+    openUserModal: openUserModalStore,
   } = useModalStore()
 
   // == Features ==
-  const {
-    handleFetchComments,
-    handleAddComment,
-    handleUpdateComment,
-    handleDeleteComment,
-    handleLikeComment,
-  } = useCommentActions()
+  const { fetchComments, addComment, updateComment, deleteComment, likeComment } = useCommentActions()
 
   const {
     fetchPosts: fetchPostsFromApi,
@@ -171,7 +165,7 @@ const PostsManager = () => {
   // 게시물 업데이트
   const updatePost = async () => {
     if (!selectedPost) return
-    
+
     try {
       const updateData: UpdatePostRequest = {
         id: selectedPost.id,
@@ -189,7 +183,7 @@ const PostsManager = () => {
   // 게시물 삭제
   const deletePost = async () => {
     if (!selectedPost) return
-    
+
     try {
       await deletePostFromApi(selectedPost.id)
       closeAllModals()
@@ -203,7 +197,16 @@ const PostsManager = () => {
     if (!newComment.postId) return
 
     try {
-      await handleAddComment(newComment as CommentType)
+      const commentData: CommentType = {
+        id: 0, // 임시 ID, 서버에서 생성됨
+        body: newComment.body,
+        postId: newComment.postId,
+        userId: newComment.userId,
+        author: { id: newComment.userId, username: "사용자", image: "" }, // 임시 데이터
+        likes: 0,
+        user: { id: newComment.userId, username: "사용자", image: "" }, // 임시 데이터
+      }
+      await addComment(commentData)
       closeAllModals()
       resetNewComment()
     } catch (error) {
@@ -218,9 +221,9 @@ const PostsManager = () => {
   // 댓글 업데이트
   const onUpdateComment = async () => {
     if (!selectedComment) return
-    
+
     try {
-      await handleUpdateComment(selectedComment)
+      await updateComment(selectedComment)
       closeAllModals()
     } catch (error) {
       console.error("댓글 업데이트 오류:", error)
@@ -230,7 +233,7 @@ const PostsManager = () => {
   // 댓글 삭제
   const onDeleteComment = async (id: number, postId: number) => {
     try {
-      await handleDeleteComment(id, postId)
+      await deleteComment(id, postId)
     } catch (error) {
       if (error instanceof Error) {
         alert(error.message)
@@ -243,7 +246,11 @@ const PostsManager = () => {
   // 댓글 좋아요
   const onLikeComment = async (id: number, postId: number) => {
     try {
-      await handleLikeComment(id, postId)
+      const currentComment = comments[postId]?.find((c) => c.id === id)
+      if (!currentComment) {
+        throw new Error("댓글을 찾을 수 없습니다.")
+      }
+      await likeComment(id, currentComment.likes, postId)
     } catch (error) {
       console.error("댓글 좋아요 오류:", error)
     }
@@ -252,7 +259,7 @@ const PostsManager = () => {
   // 게시물 상세 보기
   const openPostDetail = (post: Post) => {
     setSelectedPost(post)
-    handleFetchComments(post.id)
+    fetchComments(post.id)
     openPostDetailDialog()
   }
 
@@ -423,7 +430,7 @@ const PostsManager = () => {
       />
 
       <PostDetailModal
-        comments={selectedPost?.id ? (comments[selectedPost.id] || []) : []}
+        comments={selectedPost?.id ? comments[selectedPost.id] || [] : []}
         isOpen={showPostDetailDialog}
         onAddComment={openAddCommentModal}
         onClose={closePostDetailDialog}

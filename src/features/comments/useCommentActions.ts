@@ -1,9 +1,11 @@
+import { useQueryClient } from "@tanstack/react-query"
 import { useCommentStore } from "@entities/comment"
 import { commentsApi } from "@entities/comment/api/commentApi"
 import { CommentType } from "@entities/comment/model/types"
 import { isCommentDuplicate, isCommentExists } from "@shared/utils/commentUtils"
 
 export const useCommentActions = () => {
+  const queryClient = useQueryClient()
   const { comments, addComment, updateComment, deleteComment, fetchCommentsForPost, likeComment } = useCommentStore()
 
   const handleAddComment = async (newComment: CommentType) => {
@@ -19,6 +21,11 @@ export const useCommentActions = () => {
 
       // 3. 스토어에 추가
       addComment(response as CommentType)
+
+      // 4. 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["comments", newComment.postId] })
+      queryClient.invalidateQueries({ queryKey: ["posts"] })
+
       return response
     } catch (error) {
       console.error("댓글 추가 오류:", error)
@@ -30,6 +37,11 @@ export const useCommentActions = () => {
     try {
       const response = await commentsApi.updateComment(comment)
       updateComment(response)
+
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["comments", comment.postId] })
+      queryClient.invalidateQueries({ queryKey: ["posts"] })
+
       return response
     } catch (error) {
       console.error("댓글 업데이트 오류:", error)
@@ -50,6 +62,10 @@ export const useCommentActions = () => {
 
       // 3. 스토어에서 제거
       deleteComment(id, postId)
+
+      // 4. 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["comments", postId] })
+      queryClient.invalidateQueries({ queryKey: ["posts"] })
     } catch (error) {
       console.error("댓글 삭제 오류:", error)
       throw error
@@ -65,6 +81,10 @@ export const useCommentActions = () => {
 
       const response = await commentsApi.likeComment(id, currentComment.likes)
       likeComment(response.id, response.postId)
+
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["comments", postId] })
+
       return response
     } catch (error) {
       console.error("댓글 좋아요 오류:", error)
