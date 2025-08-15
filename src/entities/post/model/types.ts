@@ -16,7 +16,7 @@ export type PostList = { posts: Post[]; total: number }
 // 게시물 생성용 타입
 export type CreatePostRequest = {
   body: string
-  tagIds: number[]
+  tags: string[]
   title: string
   userId: number
 }
@@ -25,6 +25,6 @@ export type CreatePostRequest = {
 export type UpdatePostRequest = {
   body: string
   id: number
-  tagIds: number[]
+  tags: string[]
   title: string
 }

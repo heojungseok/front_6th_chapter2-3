@@ -163,7 +163,7 @@ const PostsManager = () => {
     try {
       await addPostFromApi(newPost)
       closeAllModals()
-      setNewPost({ title: "", body: "", userId: 1, tagIds: [] })
+      setNewPost({ title: "", body: "", userId: 1, tags: [] })
     } catch (error) {
       console.error("게시물 추가 오류:", error)
     }
@@ -176,9 +176,9 @@ const PostsManager = () => {
     try {
       const updateData: UpdatePostRequest = {
         id: selectedPost.id,
+        tags: selectedPost.tags,
         title: selectedPost.title,
         body: selectedPost.body,
-        tagIds: selectedPost.tags.map(tag => tag.id)
       }
       await updatePostFromApi(updateData)
       closeAllModals()
@@ -198,8 +198,6 @@ const PostsManager = () => {
       console.error("게시물 삭제 오류:", error)
     }
   }
-
-
 
   // 댓글 추가
   const onAddComment = async () => {

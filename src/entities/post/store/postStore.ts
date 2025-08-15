@@ -37,7 +37,7 @@ export const usePostStore = create<PostState>((set) => ({
   // 초기 상태
   posts: [],
   selectedPost: null,
-  newPost: { body: "", tagIds: [], title: "", userId: 1 },
+  newPost: { body: "", tags: [], title: "", userId: 1 },
   total: 0,
   isLoading: false,
   error: null,
@@ -81,7 +81,7 @@ export const usePostStore = create<PostState>((set) => ({
 
   resetNewPost: () =>
     set({
-      newPost: { body: "", tagIds: [], title: "", userId: 1 },
+      newPost: { body: "", tags: [], title: "", userId: 1 },
     }),
 
   setLoading: (loading) => set({ isLoading: loading }),
