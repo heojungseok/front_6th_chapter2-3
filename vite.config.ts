@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/front_6th_chapter2-3/' : '/',
+  base: mode === "production" ? "/front_6th_chapter2-3/" : "/",
   plugins: [react()],
   resolve: {
     alias: {
