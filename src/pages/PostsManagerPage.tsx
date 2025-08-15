@@ -1,6 +1,5 @@
 import { CommentType } from "@entities/comment/model/types"
 import { useCommentStore } from "@entities/comment/store/commentStore"
-import { useModalStore } from "@entities/modal"
 import { CreatePostRequest, Post, UpdatePostRequest } from "@entities/post"
 import { usePostStore } from "@entities/post/store/postStore"
 import { Tag, useTagStore } from "@entities/tag"
@@ -24,12 +23,8 @@ import {
   SelectValue,
 } from "@shared/ui"
 // 모달 import
-import { AddCommentModal } from "@widgets/modals/AddCommentModal"
-import { AddPostModal } from "@widgets/modals/AddPostModal"
-import { EditCommentModal } from "@widgets/modals/EditCommentModal"
-import { EditPostModal } from "@widgets/modals/EditPostModal"
-import { PostDetailModal } from "@widgets/modals/PostDetailModal"
-import { UserModal } from "@widgets/modals/UserModal"
+import { AddCommentModal, AddPostModal, EditCommentModal, EditPostModal, PostDetailModal, UserModal } from "@widgets/modals"
+import { useModalStore } from "@widgets/modals/store/modalStore"
 import { PostsTable } from "@widgets/posts/PostsTable"
 import { Plus, Search } from "lucide-react"
 import { useEffect } from "react"
@@ -326,7 +321,7 @@ const PostsManager = () => {
           <div className="flex gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
                 <Input
                   className="pl-8"
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -435,7 +430,7 @@ const PostsManager = () => {
       />
 
       <PostDetailModal
-        comments={comments[selectedPost?.id || 0] || []}
+        comments={selectedPost?.id ? (comments[selectedPost.id] || []) : []}
         isOpen={showPostDetailDialog}
         onAddComment={openAddCommentModal}
         onClose={closePostDetailDialog}

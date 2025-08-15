@@ -37,7 +37,7 @@ export const CommentSection = ({
         </Button>
       </div>
       <div className="space-y-1">
-        {comments.map((comment) => (
+        {Array.isArray(comments) ? comments.map((comment) => (
           <div className="flex items-center justify-between text-sm border-b pb-1" key={comment.id}>
             <div className="flex items-center space-x-2 overflow-hidden">
               <span className="font-medium truncate">{comment.user.username}:</span>
@@ -62,7 +62,9 @@ export const CommentSection = ({
               </Button>
             </div>
           </div>
-        ))}
+        )) : (
+          <div className="text-sm text-gray-500">댓글을 불러올 수 없습니다.</div>
+        )}
       </div>
     </div>
   )
