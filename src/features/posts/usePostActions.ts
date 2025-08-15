@@ -18,7 +18,13 @@ export const usePostActions = () => {
     setLoading(true)
     try {
       const data = await postApi.fetchPosts(limit, skip) 
-      setPosts(data.posts as Post[])
+      const usersData = await userApi.fetchUsers()
+        
+      const postsWithUsers = data.posts.map((post: Post) => ({
+        ...post,
+        author: usersData.users.find((user: UserSlime) => user.id === post.id),
+      }))
+      setPosts(postsWithUsers as Post[])
       setTotal(data.total as number)
       return data
     } catch (error) {
@@ -60,7 +66,7 @@ export const usePostActions = () => {
 
       const postsWithUsers = postsData.posts.map((post: Post) => ({
         ...post,
-        author: usersData.users.find((user: UserSlime) => user.id === post.author.id),
+        author: usersData.users.find((user: UserSlime) => user.id === post.id),
       }))
 
       setPosts(postsWithUsers as Post[])

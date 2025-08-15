@@ -4,13 +4,11 @@ import { User, UserSlime } from "../model/types"
 
 export const userApi = {
   // 사용자 목록 가져오기 (간단한 정보)
-  fetchUsers: async (limit: number = 0, select?: string): Promise<{ users: UserSlime[] }> => {
+  fetchUsers: async (limit: number = 0): Promise<{ users: UserSlime[] }> => {
     try {
       const params = new URLSearchParams()
       params.append("limit", limit.toString())
-      if (select) {
-        params.append("select", select)
-      }
+      params.append("select", "username,image")
 
       const response = await fetch(`${API_CONFIG.USERS.BASE}?${params.toString()}`)
       if (!response.ok) {
