@@ -4,7 +4,7 @@ import { CreatePostRequest, Post, PostList, UpdatePostRequest } from "../model/t
 
 export const postApi = {
   // 게시물 목록 가져오기
-  fetchPosts: async (skip: number, limit: number): Promise<PostList> => {
+  fetchPosts: async (limit: number, skip: number): Promise<PostList> => {
     try {
       const response = await fetch(`${API_CONFIG.POSTS.BASE}?limit=${limit}&skip=${skip}`)
       if (!response.ok) {

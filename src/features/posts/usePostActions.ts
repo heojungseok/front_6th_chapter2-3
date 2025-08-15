@@ -14,10 +14,10 @@ export const usePostActions = () => {
     deletePost: deletePostFromStore,
   } = usePostStore()
 
-  const fetchPosts = async (skip: number, limit: number) => {
+  const fetchPosts = async (limit: number, skip: number) => {
     setLoading(true)
     try {
-      const data = await postApi.fetchPosts(limit, skip)
+      const data = await postApi.fetchPosts(limit, skip) 
       setPosts(data.posts as Post[])
       setTotal(data.total as number)
       return data
