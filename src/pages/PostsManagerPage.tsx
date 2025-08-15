@@ -64,7 +64,6 @@ const PostsManager = () => {
     setOrder,
     newPost,
     setNewPost,
-    isLoading,
   } = usePostStore()
 
   // == 댓글 도메인 ==
@@ -371,22 +370,19 @@ const PostsManager = () => {
           </div>
 
           {/* 게시물 테이블 */}
-          {isLoading ? (
-            <div className="flex justify-center p-4">로딩 중...</div>
-          ) : (
-            <PostsTable
-              deletePost={deletePost}
-              editPost={setSelectedPost}
-              openPostDetail={openPostDetail}
-              openUserModal={openUserModal}
-              posts={posts}
-              searchQuery={searchQuery}
-              selectedTag={selectedTag as string}
-              setSelectedTag={setSelectedTag}
-              setShowEditDialog={openEditDialog}
-              updateURL={() => updateURLParams(skip, limit, searchQuery, sortBy, order, selectedTag)}
-            />
-          )}
+          {/* postsLoading 사용 제거 */}
+          <PostsTable
+            deletePost={deletePost}
+            editPost={setSelectedPost}
+            openPostDetail={openPostDetail}
+            openUserModal={openUserModal}
+            posts={posts}
+            searchQuery={searchQuery}
+            selectedTag={selectedTag as string}
+            setSelectedTag={setSelectedTag}
+            setShowEditDialog={openEditDialog}
+            updateURL={() => updateURLParams(skip, limit, searchQuery, sortBy, order, selectedTag)}
+          />
 
           {/* 페이지네이션 */}
           <Pagination limit={limit} onLimitChange={setLimit} onSkipChange={setSkip} skip={skip} total={total} />

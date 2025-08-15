@@ -3,8 +3,10 @@ import { postApi } from "@entities/post/api/postApi"
 import { CreatePostRequest, Post, UpdatePostRequest } from "@entities/post/model/types"
 import { userApi } from "@entities/user/api/userApi"
 import { UserSlime } from "@entities/user/model/types"
+import { useQueryClient } from "@tanstack/react-query"
 
 export const usePostActions = () => {
+  const queryClient = useQueryClient()
   const {
     setPosts,
     setTotal,
@@ -14,7 +16,8 @@ export const usePostActions = () => {
     deletePost: deletePostFromStore,
   } = usePostStore()
 
-  const fetchPosts = async (limit: number, skip: number) => {
+  // fetchPosts 함수를 별도로 제공 (기존 인터페이스 유지)
+  const fetchPostsData = async (limit: number, skip: number) => {
     setLoading(true)
     try {
       const data = await postApi.fetchPosts(limit, skip) 
@@ -35,15 +38,23 @@ export const usePostActions = () => {
     }
   }
 
-  const searchPosts = async (query: string) => {
+  // searchPosts 함수를 별도로 제공 (기존 인터페이스 유지)
+  const searchPostsData = async (query: string) => {
     if (!query) {
-      return await fetchPosts(0, 10)
+      return await fetchPostsData(0, 10)
     }
 
     setLoading(true)
     try {
       const data = await postApi.searchPosts(query)
-      setPosts(data.posts as Post[])
+      // 사용자 정보를 함께 가져오기
+      const usersData = await userApi.fetchUsers()
+      const postsWithUsers = data.posts.map((post: Post) => ({
+        ...post,
+        author: usersData.users.find((user: UserSlime) => user.id === post.author.id),
+      }))
+
+      setPosts(postsWithUsers as Post[])
       setTotal(data.total as number)
       return data
     } catch (error) {
@@ -54,14 +65,16 @@ export const usePostActions = () => {
     }
   }
 
-  const fetchPostsByTag = async (tag: string) => {
+  // fetchPostsByTag 함수를 별도로 제공 (기존 인터페이스 유지)
+  const fetchPostsByTagData = async (tag: string) => {
     if (!tag || tag === "all") {
-      return await fetchPosts(0, 10)
+      return await fetchPostsData(0, 10)
     }
 
     setLoading(true)
     try {
       const postsData = await postApi.fetchPostsByTag(tag)
+      // 사용자 정보를 함께 가져오기
       const usersData = await userApi.fetchUsers()
 
       const postsWithUsers = postsData.posts.map((post: Post) => ({
@@ -84,6 +97,8 @@ export const usePostActions = () => {
     try {
       const data = await postApi.createPost(post)
       addPostToStore(data as Post)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
       return data
     } catch (error) {
       console.error("게시물 생성 오류:", error)
@@ -95,6 +110,8 @@ export const usePostActions = () => {
     try {
       const data = await postApi.updatePost(post)
       updatePostInStore(data as Post)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
       return data
     } catch (error) {
       console.error("게시물 업데이트 오류:", error)
@@ -106,6 +123,8 @@ export const usePostActions = () => {
     try {
       await postApi.deletePost(id)
       deletePostFromStore(id)
+      // 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['posts'] })
     } catch (error) {
       console.error("게시물 삭제 오류:", error)
       throw error
@@ -113,9 +132,9 @@ export const usePostActions = () => {
   }
 
   return {
-    fetchPosts,
-    searchPosts,
-    fetchPostsByTag,
+    fetchPosts: fetchPostsData,
+    searchPosts: searchPostsData,
+    fetchPostsByTag: fetchPostsByTagData,
     createPost,
     updatePost,
     deletePost,
