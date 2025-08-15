@@ -1,1 +1,1 @@
-export type Tag = { id: number; slug: string; url: string }
+export type Tag = { name: string; slug: string; url: string }

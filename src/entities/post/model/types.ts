@@ -1,4 +1,3 @@
-import { Tag } from "@entities/tag/model/types"
 import { UserSlime } from "@entities/user/model/types"
 
 export type Reaction = { dislikes: number; likes: number }
@@ -8,7 +7,7 @@ export type Post = {
   createdAt: string
   id: number
   reactions: Reaction
-  tags: Tag[]
+  tags: string[]
   title: string
   updatedAt: string
 }

@@ -2,7 +2,7 @@ import { CommentType } from "@entities/comment/model/types"
 import { useCommentStore } from "@entities/comment/store/commentStore"
 import { CreatePostRequest, Post, UpdatePostRequest } from "@entities/post"
 import { usePostStore } from "@entities/post/store/postStore"
-import { Tag, useTagStore } from "@entities/tag"
+import { tagApi, useTagStore } from "@entities/tag"
 import { User, userApi, UserSlime, useUserStore } from "@entities/user"
 import { useCommentActions } from "@features/comments"
 import { usePostActions } from "@features/posts"
@@ -44,7 +44,7 @@ const PostsManager = () => {
   }, [location.search])
 
   // == 태그 도메인 ==
-  const { tags, selectedTag, setTags, setSelectedTag } = useTagStore()
+  const { tags, selectedTag, setSelectedTag, setTags } = useTagStore()
 
   // == 게시글 도메인 ==
   const {
@@ -199,16 +199,7 @@ const PostsManager = () => {
     }
   }
 
-  // 태그 가져오기
-  const fetchTags = async () => {
-    try {
-      const response = await fetch("/api/posts/tags")
-      const data = await response.json()
-      setTags(data as Tag[])
-    } catch (error) {
-      console.error("태그 가져오기 오류:", error)
-    }
-  }
+
 
   // 댓글 추가
   const onAddComment = async () => {
@@ -292,7 +283,15 @@ const PostsManager = () => {
   }
 
   useEffect(() => {
-    fetchTags()
+    const loadTags = async () => {
+      try {
+        const tagsData = await tagApi.fetchTags()
+        setTags(tagsData)
+      } catch (error) {
+        console.error("태그 로딩 오류:", error)
+      }
+    }
+    loadTags()
   }, [])
 
   useEffect(() => {
